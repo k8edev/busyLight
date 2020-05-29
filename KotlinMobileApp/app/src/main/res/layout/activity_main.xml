@@ -38,6 +38,7 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text=""
+        android:hint="Command to the Arduino"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

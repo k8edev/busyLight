@@ -10,7 +10,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
-import androidx.core.app.ActivityCompat.startActivityForResult
 import android.util.Log
 import android.widget.*
 import androidx.core.app.ActivityCompat
@@ -18,25 +17,20 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import java.io.IOException
 import java.util.*
-import java.util.Set
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import android.bluetooth.BluetoothSocket
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.KeyEvent
-import java.io.InputStream
-import java.io.OutputStream
-
 
 var devices = ArrayList<BluetoothDevice>()
 var devicesMap = HashMap<String, BluetoothDevice>()
 var mArrayAdapter: ArrayAdapter<String>? = null
-val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 var message = ""
+val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-const val REQUEST_ENABLE_BT = 0;
-const val REQUEST_DISCOVER_BT = 1;
+const val REQUEST_ENABLE_BT = 0
+const val REQUEST_DISCOVER_BT = 1
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,9 +39,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         mArrayAdapter = ArrayAdapter(this, R.layout.dialog_select_device)
         val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(mReceiver, filter) // Don't forget to unregister during onDestroy
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+        registerReceiver(mReceiver, filter)
 
         // Make sure bluetooth is available. Turn on Bluetooth if it's off.
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -64,15 +58,14 @@ class MainActivity : AppCompatActivity() {
         }
         editText.addTextChangedListener(object : TextWatcher {
 
-            override fun afterTextChanged(s: Editable) {
-            }
+            override fun afterTextChanged(s: Editable) {}
 
             override fun beforeTextChanged(s: CharSequence, start: Int,
                                            count: Int, after: Int) {
             }
 
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int)
+            {
                 message = s.toString()
             }
         })
@@ -81,9 +74,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         if (mReceiver != null) {
-            unregisterReceiver(mReceiver);
+            unregisterReceiver(mReceiver)
         }
-        super.onDestroy();
+        super.onDestroy()
     }
 
     fun onVideoCall(view: View) {
@@ -92,7 +85,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onAudioCall(view: View) {
-
+        // Todo
     }
 
     fun allClear(view: View) {
@@ -100,16 +93,13 @@ class MainActivity : AppCompatActivity() {
         changeDisplay(view)
     }
 
-    fun changeDisplay(view: View) {
-        if (BluetoothAdapter.getDefaultAdapter() == null) {
-
-        } else {
+    private fun changeDisplay(view: View) {
+        if (BluetoothAdapter.getDefaultAdapter() != null) {
             devicesMap = HashMap()
             devices = ArrayList()
             mArrayAdapter!!.clear()
 
             val editText = findViewById<EditText>(R.id.editText)
-            // message = editText.text.toString()
             for (device in BluetoothAdapter.getDefaultAdapter().bondedDevices) {
                 devicesMap.put(device.address, device)
                 devices.add(device)
@@ -117,17 +107,12 @@ class MainActivity : AppCompatActivity() {
                 mArrayAdapter!!.add((if (device.name != null) device.name else "Unknown") + "\n" + device.address + "\nPaired")
             }
 
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {
                 Log.i("info", "No fine location permissions")
-
                 ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    1)
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
             }
-
 
             // Start discovery process
             if (BluetoothAdapter.getDefaultAdapter().startDiscovery()) {
@@ -172,7 +157,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 }
 
 class SelectDeviceDialog : DialogFragment() {
@@ -196,7 +180,7 @@ class SelectDeviceDialog : DialogFragment() {
 private class BluetoothClient(device: BluetoothDevice): Thread() {
 
     private val mmSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
-        var bd = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(device.address)
+        val bd = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(device.address)
         bd.createInsecureRfcommSocketToServiceRecord(uuid)
     }
 
